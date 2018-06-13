@@ -1,32 +1,32 @@
 # Introduction
 This repo demonstrates how to setup various services in a kubernetes namespace with an [ambassador](https://getambassador.io) gateway.
 
-# Deploy & Test
-```
-$ kubectl create ns ambassador-playground
-```
+# Setup istio first
+I follow [this particular](https://istio.io/docs/setup/kubernetes/helm-install/#option-1-install-with-helm-via-helm-template) way of installation and added the yaml to git.
 
+Next I deployed [this demo program](https://istio.io/docs/guides/bookinfo/).
+
+# Deploy & Test
 ```
 $ cat deploy-all.sh 
 #!/bin/bash -e
-NAMESPACE=$1
+
+# install and test istio & the demo bookinfo app
+kubectl create ns istio-system
+kubctl apply -f k8s/istio.yaml
+kubectl apply -f k8s/bookinfo.yaml
+# install ambassador and an http-echo service reachable at localhost:80
+NAMESPACE="ambassador-playground"
+kubectl create ns $NAMESPACE
 kustomize build ./k8s/ambassador/overlays/docker-for-desktop | kubectl -n $NAMESPACE apply -f -
 kustomize build ./k8s/http-echo/base | kubectl -n $NAMESPACE apply -f -
+
 ```
 
 ```
 $ bash deploy-all.sh ambassador-playground
-service "g-ambassador" created
-service "g-ambassador-admin" created
-serviceaccount "g-ambassador" created
-deployment "g-ambassador" created
-clusterrole "g-ambassador" configured
-clusterrolebinding "g-ambassador" configured
-service "http-echo" created
-deployment "http-echo" created
 ```
-
-Now let's take a look at the service that is declared for this echo service.
+Now let's take a look at the service that is declared for this http-echo service.
 ```
 ---
 apiVersion: v1
@@ -55,7 +55,7 @@ spec:
     service: http-echo
 ```
 
-If everything worked out, ambassador will be available on `localhost:80` (without a `port-forward` too) so we can curl services easily!
+If everything worked out, ambassador will be available on `localhost:80` so we can curl services.
 ```
 $ cat http-echo-test.sh
 #!/bin/bash -e
