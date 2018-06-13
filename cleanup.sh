@@ -1,3 +1,4 @@
 #!/bin/bash -e
-kubectl delete ns ambassador-playground 
-kubectl delete ns istio-system 
+kubectl -n default delete --ignore-not-found pod --all
+kubectl -n default delete --ignore-not-found svc --all
+kubectl delete --ignore-not-found ns ambassador-playground istio-system
