@@ -1,0 +1,9 @@
+# This uses the empty string to accomodate the ambassador config service field.
+# The service field must refer to a service by name (not by label selector unless I just missed it...). 
+namePrefix: ""
+commonLabels:
+  hello: world
+commonAnnotations:
+  note: testin things
+resources:
+- hello-world.yaml

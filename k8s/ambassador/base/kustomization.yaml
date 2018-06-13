@@ -1,0 +1,7 @@
+namePrefix: g-
+commonLabels:
+  hello: world
+commonAnnotations:
+  note: testin things
+resources:
+- ambassador.yaml
